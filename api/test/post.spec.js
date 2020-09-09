@@ -41,5 +41,48 @@ describe('post', () => {
           done();
         })
     })
+
+    
   })
+
+  context('quando nao informo o dono', () => {
+    let task = {title: "nova tarefa", owner:"", done: false}
+
+    it('entao deve retornar 400', (done) => {
+      request
+        .post('/task')
+        .send(task)
+        .end((err, res) => {
+          expect(res).to.has.status(400);
+          expect(res.body.errors.owner.message).to.eql('oops! Owner is required.')
+          done();
+        })
+    })
+  })
+
+  context('quando a tarefa já existe', () => {
+    let task = {title: "comprar um carro pra buscar os dog", owner:"gusta@email.com", done: false}
+
+    before((done) => {
+      request
+        .post('/task')
+        .send(task)
+        .end((err, res) => {
+          expect(res).to.has.status(200)
+          done()
+        })
+    })
+    
+    
+    it('deve retornar 409', (done) => {
+      request
+        .post('/task')
+        .send(task)
+        .end((err, res) => {
+          expect(res).to.has.status(409)
+          done()
+        })
+    })
+  })
+
 })

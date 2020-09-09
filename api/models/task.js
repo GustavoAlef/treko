@@ -3,9 +3,13 @@ import mongoose from 'mongoose';
 let Task = new mongoose.Schema({
     title: {
        type: String,
-       required: [true, 'oops! Title is required.']
+       required: [true, 'oops! Title is required.'],
+       unique: true
     },
-    owner: String,
+    owner: {
+        type: String,
+        required: [true, 'oops! Owner is required.']
+    },
     done: Boolean
 });
 
