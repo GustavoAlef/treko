@@ -6,7 +6,7 @@
   "scripts": {
     "start": "babel-node app.js",
     "dev": "nodemon --exec babel-node app.js",
-    "test": "npm run dropdb & NODE_ENV=dev mocha test --require babel-register --exit",
+    "test": "npm run dropdb & NODE_ENV=dev mocha test/ --reporter mochawesome --require babel-register --exit",
     "dropdb": "./scripts/dropdb.sh"
   },
   "keywords": [
@@ -30,6 +30,7 @@
     "chai": "4.2.0",
     "chai-http": "4.3.0",
     "mocha": "8.1.3",
+    "mochawesome": "^6.1.1",
     "nodemon": "^1.19.1"
   }
 }
