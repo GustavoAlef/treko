@@ -2,7 +2,12 @@ import Task from './models/task';
 
 import { publishToQueue } from './mqservice';
 
-const defaultQueue = "tasks";
+var defaultQueue;
+
+if(process.env.NODE_ENV == 'dev')
+    defaultQueue = 'tasksdev'
+else
+    defaultQueue = 'tasks'
 
 export default {
     create: (req, res) => {

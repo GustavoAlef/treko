@@ -10,11 +10,23 @@ const app = require("../app");
 const request = chai.request.agent(app);
 const expect = chai.expect;
 
+//consulta api externa
+const rabbit = chai.request('http://rabbitmq:15672')
+
 describe('post', () => {
   context('quando eu cadastro uma tarefa', () => {
     
     let task = {title: "Estudar mongoose", owner:"email@email.com", done: false}
-       
+
+    before(done => {
+      rabbit
+        .delete('/api/queues/%2F/tasksdev/contents')
+        .auth('guest', 'guest')
+        .end((err, res) => {
+          expect(res).to.has.status(204)
+          done()
+        })
+    })
     
     it('entao deve retornar 200', (done) => {
       request
@@ -24,6 +36,21 @@ describe('post', () => {
           expect(res).to.has.status(200);
           expect(res.body.data.title).to.be.an('string');
           done();
+        })
+    })
+
+    it('e deve enviar um email', (done) => {
+
+      let payload = {vhost:"/",name:"tasksdev",truncate:"50000",ackmode:"ack_requeue_true",encoding:"auto",count:"1"}
+
+      rabbit
+        .post('/api/queues/%2F/tasksdev/get')
+        .auth('guest', 'guest')
+        .send(payload)
+        .end((err, res) => {
+          expect(res).to.has.status(200)
+          expect(res.body[0].payload).to.contain(`Tarefa ${task.title} criada com sucesso!`)
+          done()
         })
     })
   })
